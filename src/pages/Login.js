@@ -24,7 +24,7 @@ const Login = () => {
             await signInWithEmailAndPassword(authentication, email, password);
 
             // 2 --- if login is ok, then navigate to dashboard
-            navigate('/dashbord')
+            navigate('/dashboard')
         } catch (err) {
             // 3 --- if login fail, then show error message
             setError(err.message);
