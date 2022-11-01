@@ -1,7 +1,9 @@
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { getAuth, signInWithEmailAndPassword } from 'firebase/auth'
 
+import InstaLogo from "../components/InstaLogo";
+import InstaBaner from "../components/InstaBaner";
 import { useSiteTitle } from "../hooks/useSiteTitle";
 
 const Login = () => {
@@ -13,7 +15,9 @@ const Login = () => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
 
-    const invalid = email === "" || password === "";
+    const invalidForm = useMemo(() => {
+        return email === "" || password === "";
+    }, [email, password])
 
     const handleSubmit = async (event) => {
         event.preventDefault();
@@ -34,21 +38,13 @@ const Login = () => {
     return (
         <div className="container flex mx-auto max-w-screen-md items-center h-screen">
             <div className="flex w-3/5">
-                <img
-                    src="/images/iphone-with-profile.jpg"
-                    alt="iPhone with Instagram app"
-                />
+                <InstaBaner />
             </div>
             <div className="flex flex-col w-2/5">
                 <div className="flex flex-col items-center bg-white p-4 border mb-4">
                     <h1 className="flex justify-center w-full">
-                        <img
-                            src="/images/logo.png"
-                            alt="Instagram"
-                            className="mt-2 w-6/12 mb-4"
-                        />
+                        <InstaLogo />
                     </h1>
-
                     <form onSubmit={handleSubmit}>
                         <input
                             aria-label="Enter your email address"
@@ -68,9 +64,9 @@ const Login = () => {
                         />
                         {error && <p className="text-red-500 text-center my-3">{error}</p>}
                         <button
-                            disabled={invalid}
+                            disabled={invalidForm}
                             type="submit"
-                            className={`bg-blue-500 text-white w-full rounded h-8 font-bold ${invalid ? " opacity-50" : ""
+                            className={`bg-blue-500 text-white w-full rounded h-8 font-bold ${invalidForm ? " opacity-50" : ""
                                 }`}
                         >
                             Log In
