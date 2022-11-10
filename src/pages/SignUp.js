@@ -9,6 +9,8 @@ import InstaBaner from "../components/InstaBaner";
 import { useSiteTitle } from "../hooks/useSiteTitle";
 import { FirebaseContext } from "../context/firebase";
 
+import * as ROUTES from '../constants/routes'
+
 const SignUp = () => {
     useSiteTitle("Sign Up");
     const navigate = useNavigate();
@@ -16,16 +18,18 @@ const SignUp = () => {
 
     const [error, setError] = useState("");
 
-    const [userName, setUserName] = useState("");
-    const [fullName, setFullName] = useState("");
-    const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
+    const [userFields, setUserFields] = useState({
+        userName: "",
+        fullName: "",
+        email: "",
+        password: "",
+    });
 
     const handleSubmit = async (event) => {
         event.preventDefault();
 
         // 1 --- check is user by userName already exist
-        const q = query(collection(db, "users"), where("username", "==", userName));
+        const q = query(collection(db, "users"), where("username", "==", userFields.userName));
         const querySnapshot = await getDocs(q);
         const doesExistUser = !querySnapshot.empty;
 
@@ -37,33 +41,34 @@ const SignUp = () => {
         try {
             // 2 --- create user by email and password (this is just for authentication)
             const auth = getAuth();
-            const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+            const userCredential = await createUserWithEmailAndPassword(auth, userFields.email, userFields.password);
 
             // 3 --- update user displayName
             await updateProfile(userCredential.user, {
-                displayName: userName,
+                displayName: userFields.userName,
             })
 
             // 4 --- create user in users collection
             await addDoc(collection(db, 'users'), {
                 userId: userCredential.user.uid,
-                username: userName,
-                fullName,
-                emailAddress: email.toLowerCase(),
+                username: userFields.userName,
+                fullName: userFields.fullName,
+                emailAddress: userFields.email.toLowerCase(),
                 following: [],
                 followers: [],
                 dateCreated: Date.now(),
             })
 
             // 5 --- if all ok, then go to login for login with new user
-            navigate('/login');
+            navigate(ROUTES.LOGIN);
         } catch (err) {
             setError(err.message);
         }
     };
 
-    const invalidForm =
-        email === "" || password === "" || userName === "" || fullName === "";
+    const changeFiled = (event) => setUserFields((prevState) => ({ ...prevState, [event.target.name]: event.target.value }))
+
+    const invalidForm = Object.values(userFields).some(value => !value)
 
     return (
         <div className="container flex mx-auto max-w-screen-md items-center h-screen">
@@ -77,36 +82,40 @@ const SignUp = () => {
                     </h1>
                     <form onSubmit={handleSubmit}>
                         <input
+                            name="userName"
                             aria-label="Enter your user name"
                             className="text-sm w-full mr-3 py-5 px-4 h-2 border rounded mb-2"
                             type="text"
                             placeholder="User name"
-                            value={userName}
-                            onChange={(event) => setUserName(event.target.value)}
+                            value={userFields.userName}
+                            onChange={changeFiled}
                         />
                         <input
+                            name="fullName"
                             aria-label="Enter your full name"
                             className="text-sm w-full mr-3 py-5 px-4 h-2 border rounded mb-2"
                             type="text"
                             placeholder="Full name"
-                            value={fullName}
-                            onChange={(event) => setFullName(event.target.value)}
+                            value={userFields.fullName}
+                            onChange={changeFiled}
                         />
                         <input
+                            name="email"
                             aria-label="Enter your email address"
                             className="text-sm w-full mr-3 py-5 px-4 h-2 border rounded mb-2"
                             type="email"
                             placeholder="Email address"
-                            value={email}
-                            onChange={(event) => setEmail(event.target.value)}
+                            value={userFields.email}
+                            onChange={changeFiled}
                         />
                         <input
+                            name="password"
                             aria-label="Enter your password"
                             className="text-sm w-full mr-3 py-5 px-4 h-2 border rounded mb-2"
                             type="password"
                             placeholder="Password"
-                            value={password}
-                            onChange={(event) => setPassword(event.target.value)}
+                            value={userFields.password}
+                            onChange={changeFiled}
                         />
                         {error && <p className="text-red-500 text-center my-3">{error}</p>}
                         <button
@@ -122,7 +131,7 @@ const SignUp = () => {
                 <div className="flex justify-center items-center flex-col w-full bg-white p-4 border">
                     <p className="text-sm">
                         Have an account?{" "}
-                        <Link to={"/login"} className="font-bold">
+                        <Link to={ROUTES.LOGIN} className="font-bold">
                             Login
                         </Link>
                     </p>

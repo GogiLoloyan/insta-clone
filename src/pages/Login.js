@@ -6,6 +6,8 @@ import InstaLogo from "../components/InstaLogo";
 import InstaBaner from "../components/InstaBaner";
 import { useSiteTitle } from "../hooks/useSiteTitle";
 
+import * as ROUTES from '../constants/routes'
+
 const Login = () => {
     useSiteTitle("Login");
     const navigate = useNavigate();
@@ -25,10 +27,10 @@ const Login = () => {
         try {
             // 1 --- login by email and password
             const authentication = getAuth();
-            await signInWithEmailAndPassword(authentication, email, password);
+            const data = await signInWithEmailAndPassword(authentication, email, password);
 
             // 2 --- if login is ok, then navigate to dashboard
-            navigate('/dashboard')
+            navigate(ROUTES.PROFILE.replace(ROUTES.PROFILE_USER_NAME_PARAM, data.user.displayName))
         } catch (err) {
             // 3 --- if login fail, then show error message
             setError(err.message);
@@ -76,7 +78,7 @@ const Login = () => {
                 <div className="flex justify-center items-center flex-col w-full bg-white p-4 border">
                     <p className="text-sm" onClick={() => navigate('/signup')}>
                         Don't have an account?{" "}
-                        <Link to="/signup" className="font-bold">
+                        <Link to={ROUTES.SIGN_UP} className="font-bold">
                             Sign up
                         </Link>
                     </p>

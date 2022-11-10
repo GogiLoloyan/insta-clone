@@ -7,33 +7,46 @@ import {
 // --- pages
 import Login from './pages/Login';
 import SignUp from "./pages/SignUp";
+import Profile from "./pages/Profile";
+
+import * as ROUTES from './constants/routes'
+import { useAuthListener } from './hooks/useAuthListener'
+import { UserContext } from "./context/user";
 
 const router = createBrowserRouter([
   {
-    path: "/",
-    element: <Navigate replace to="/login" /> // redirect to login page
+    path: ROUTES.HOME,
+    element: <Navigate replace to={ROUTES.LOGIN} /> // redirect to login page
   },
   {
-    path: "/dashboard",
+    path: ROUTES.DASHBOARD,
     element: <div>dashboard</div>,
   },
   {
-    path: "/login",
+    path: ROUTES.LOGIN,
     element: <Login />,
   },
   {
-    path: "/signup",
+    path: ROUTES.SIGN_UP,
     element: <SignUp />,
+  },
+  {
+    path: ROUTES.PROFILE,
+    element: <Profile />,
+  },
+  {
+    path: ROUTES.NOT_FOUND,
+    element: <div>not found</div>,
   },
 ]);
 
 function App() {
+  const { user } = useAuthListener();
+
   return (
-    // <div>
-    //   header
-    <RouterProvider router={router} />
-    //   footer
-    // </div>
+    <UserContext.Provider value={{ user }}>
+      <RouterProvider router={router} />
+    </UserContext.Provider>
   );
 }
 
