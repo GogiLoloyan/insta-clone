@@ -6,7 +6,7 @@ import { UserContext } from '../../context/user';
 import { DEFAULT_IMAGE_PATH } from '../../constants/paths';
 import { isUserFollowingProfile } from '../../services/firebase';
 
-// import { toggleFollow } from '../../services/firebase';
+import { toggleFollow } from '../../services/firebase';
 
 const Header = ({
     photosCount,
@@ -26,11 +26,12 @@ const Header = ({
     const [isFollowingProfile, setIsFollowingProfile] = useState(null);
 
     const handleToggleFollow = async () => {
-        setIsFollowingProfile((isFollowingProfile) => !isFollowingProfile);
+        setIsFollowingProfile((prev) => !prev);
         setFollowerCount({
-            followerCount: isFollowingProfile ? followerCount - 1 : followerCount + 1
+            payload: isFollowingProfile ? followerCount - 1 : followerCount + 1,
+            type: 'CHANGE_FOLOWERS_COUNT'
         });
-        // await toggleFollow(isFollowingProfile, user.docId, profileDocId, profileUserId, user.userId);
+        await toggleFollow(isFollowingProfile, user.docId, profileDocId, profileUserId, user.userId);
     };
 
     useEffect(() => {

@@ -76,7 +76,7 @@ export default function Header() {
                                 </button>
                                 {user && (
                                     <div className="flex items-center cursor-pointer">
-                                        <Link to={`/p/${user.username}`}>
+                                        <Link to={ROUTES.PROFILE.replace(ROUTES.PROFILE_USER_NAME_PARAM, user.username)}>
                                             <img
                                                 className="rounded-full h-8 w-8 flex"
                                                 src={`/images/avatars/${user.username}.jpg`}
