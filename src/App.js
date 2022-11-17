@@ -13,6 +13,10 @@ import * as ROUTES from './constants/routes'
 import { useAuthListener } from './hooks/useAuthListener'
 import { UserContext } from "./context/user";
 
+import Modal from "./components/Modal";
+import { ModalContextProvider } from "./context/modal";
+
+
 const router = createBrowserRouter([
   {
     path: ROUTES.HOME,
@@ -45,7 +49,10 @@ function App() {
 
   return (
     <UserContext.Provider value={{ user }}>
-      <RouterProvider router={router} />
+      <ModalContextProvider>
+        <RouterProvider router={router} />
+        <Modal />
+      </ModalContextProvider>
     </UserContext.Provider>
   );
 }
