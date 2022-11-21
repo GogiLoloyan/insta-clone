@@ -1,3 +1,4 @@
+import { cloneElement } from "react";
 import {
   Navigate,
   RouterProvider,
@@ -8,6 +9,7 @@ import {
 import Login from './pages/Login';
 import SignUp from "./pages/SignUp";
 import Profile from "./pages/Profile";
+import Dashboard from "./pages/Dashboard";
 
 import * as ROUTES from './constants/routes'
 import { useAuthListener } from './hooks/useAuthListener'
@@ -16,6 +18,15 @@ import { UserContext } from "./context/user";
 import Modal from "./components/Modal";
 import { ModalContextProvider } from "./context/modal";
 
+const ProtectedPage = ({ children }) => {
+  const { user } = useAuthListener();
+
+  if (!user) {
+    return <Navigate replace to={ROUTES.LOGIN} />
+  }
+
+  return cloneElement(children, { user })
+}
 
 const router = createBrowserRouter([
   {
@@ -24,7 +35,11 @@ const router = createBrowserRouter([
   },
   {
     path: ROUTES.DASHBOARD,
-    element: <div>dashboard</div>,
+    element: (
+      <ProtectedPage>
+        <Dashboard />
+      </ProtectedPage>
+    ),
   },
   {
     path: ROUTES.LOGIN,
@@ -37,6 +52,7 @@ const router = createBrowserRouter([
   {
     path: ROUTES.PROFILE,
     element: <Profile />,
+    // element: <ProtectedPage><Profile /></ProtectedPage>,
   },
   {
     path: ROUTES.NOT_FOUND,

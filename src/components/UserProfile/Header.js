@@ -1,12 +1,13 @@
 import { useState, useEffect, useContext } from 'react';
 import PropTypes from 'prop-types';
 
-import useUser from '../../hooks/useUser';
+import { useUser } from '../../hooks/useUser';
 import { UserContext } from '../../context/user';
 import { DEFAULT_IMAGE_PATH } from '../../constants/paths';
 import { isUserFollowingProfile } from '../../services/firebase';
 
 import { toggleFollow } from '../../services/firebase';
+import { ModalContext } from '../../context/modal';
 
 const Header = ({
     photosCount,
@@ -21,6 +22,7 @@ const Header = ({
         username: profileUsername
     }
 }) => {
+    const { openModal } = useContext(ModalContext);
     const { user: loggedInUser } = useContext(UserContext);
     const { user } = useUser(loggedInUser?.uid);
     const [isFollowingProfile, setIsFollowingProfile] = useState(null);
@@ -46,6 +48,18 @@ const Header = ({
     }, [user?.username, profileUserId]);
 
     const activeBtnFollow = user && user.username !== profileUsername;
+
+    const showList = (listIds) => {
+        openModal({
+            content: (
+                <ul>
+                    {listIds.map(id => (
+                        <li key={id}>{id}</li>
+                    ))}
+                </ul>
+            ),
+        })
+    }
 
     return (
         <div className="grid grid-cols-3 gap-4 justify-between mx-auto max-w-screen-lg">
@@ -97,12 +111,17 @@ const Header = ({
                             <p className="mr-10">
                                 <span className="font-bold">{photosCount}</span> photos
                             </p>
-                            <p className="mr-10">
+                            <p
+                                className="mr-10"
+                                onClick={() => showList(followers)}
+                            >
                                 <span className="font-bold">{followerCount}</span>
                                 {` `}
                                 {followerCount === 1 ? `follower` : `followers`}
                             </p>
-                            <p className="mr-10">
+                            <p
+                                className="mr-10"
+                                onClick={() => showList(following)}>
                                 <span className="font-bold">{following?.length}</span> following
                             </p>
                         </>

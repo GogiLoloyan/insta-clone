@@ -1,5 +1,5 @@
 import { db } from '../lib/firebase';
-import { getDocs, collection, query, where, doc, setDoc, arrayUnion, arrayRemove } from 'firebase/firestore'
+import { getDocs, collection, query, where, doc, setDoc, arrayUnion, arrayRemove, limit } from 'firebase/firestore'
 
 
 export async function getUserBy(key, value) {
@@ -123,4 +123,22 @@ export async function updateFollowedUserFollowers(
     //             FieldValue.arrayRemove(loggedInUserDocId) :
     //             FieldValue.arrayUnion(loggedInUserDocId)
     //     });
+}
+
+export async function getSuggestedProfiles(userId, following) {
+
+    const q = query(
+        collection(db, "users"),
+        where('userId', 'not-in', [...following ?? [], userId]),
+        limit(10)
+    );
+
+    const querySnapshot = await getDocs(q);
+
+    const profiles = querySnapshot.docs.map((user) => ({
+        ...user.data(),
+        docId: user.id
+    }));
+
+    return profiles;
 }

@@ -2,12 +2,12 @@ import { useContext } from 'react';
 import { getAuth, signOut } from 'firebase/auth';
 import { Link, useNavigate } from 'react-router-dom';
 
-import useUser from '../../hooks/useUser';
+import { useUser } from '../../hooks/useUser';
 import { UserContext } from '../../context/user';
 import * as ROUTES from '../../constants/routes';
 import { DEFAULT_IMAGE_PATH } from '../../constants/paths';
 
-export default function Header() {
+export default function Header({ element }) {
     const { user: loggedInUser } = useContext(UserContext);
     const { user } = useUser(loggedInUser?.uid);
     const navigate = useNavigate();
