@@ -1,8 +1,8 @@
 import PropTypes from 'prop-types';
 
 import Header from '../components/Header';
-// import Timeline from '../components/timeline';
 import Sidebar from '../components/Sidebar';
+import Timeline from '../components/TimeLine';
 
 import { useUser } from '../hooks/useUser';
 import { useSiteTitle } from '../hooks/useSiteTitle';
@@ -18,7 +18,7 @@ const Dashboard = ({ user: loggedInUser }) => {
             <div className="bg-gray-background">
                 <Header />
                 <div className="grid grid-cols-3 gap-4 justify-between mx-auto max-w-screen-lg">
-                    {/* <Timeline /> */}
+                    <Timeline />
                     <Sidebar />
                 </div>
             </div>
